@@ -625,7 +625,7 @@ static void koopa_the_quick_act_race(void) {
                         o->oKoopaAgility = 4.0f;
                     }
                     if (codeActive(29)) {
-                        obj_forward_vel_approach(o->oKoopaAgility * 10.0f * downhillSteepness,
+                        obj_forward_vel_approach(o->oKoopaAgility * 30.0f * downhillSteepness,
                                                  o->oKoopaAgility * 0.2f);
 
                     } else {

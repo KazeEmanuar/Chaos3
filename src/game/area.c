@@ -322,15 +322,21 @@ void change_area(s32 index) {
     }
 }
 
-#define CODETEST 33
+#define CODETEST 82
 u8 codeSelected[] = { 0, 0, 0, 0, 0, CODETEST, CODETEST, CODETEST };
 u16 codeTimers[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-u16 timer[] = {
-    0, 0, 0, 300, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+#define CODECOUNT 100
+u16 timer[CODECOUNT] = {
+    /*000*/ 0,   0, 120, 300, 0, 0, 0, 0, 0, 180, /*010*/ 0,   0, 0, 0, 0, 0, 0, 0,   0, 0,
+    /*020*/ 200, 0, 0,   0,   0, 0, 0, 0, 0, 0,   /*030*/ 300, 0, 0, 0, 0, 0, 0, 300, 0, 0,
+    /*040*/ 0,   30, 0,   0,   0, 0, 0, 0, 0, 0,   /*050*/ 30,   120, 0, 0, 0, 0, 300, 0,   0, 0,
+    /*060*/ 300,   0, 0,   0,   0, 0, 0, 0, 0, 0,   /*070*/ 0,   60, 0, 600, 0, 0, 0, 0,   0, 0,
+    /*080*/ 300,   0, 150,   150,   0, 0, 0, 0, 300, 0,   /*090*/ 150,   0, 0, 0, 0, 0, 0, 0,   0, 0,
 };
+/*
+
+        timer[84] = 150;
+        timer[90] = 150;*/
 u8 quicktime = 0;
 u8 validTypes[] = { SURFACE_DEFAULT,
                     SURFACE_BURNING,
@@ -388,7 +394,6 @@ struct Object *spawn_object(struct Object *parent, s32 model, const BehaviorScri
 extern const u8 toadface[];
 int newCodeTimer = 0;
 extern struct SequencePlayer gSequencePlayers[3];
-#define CODECOUNT 100
 #define CODELENGTH 150
 void chaos_processing() {
     int i;
@@ -397,9 +402,10 @@ void chaos_processing() {
     int sizecurrent = 0;
     if (gCurrLevelNum != 1) {
         if (!gMarioState->marioObj) {
-            gMarioState->marioObj = 0x803ffC00;
+            gMarioState->marioObj = 0x803ffC00; //if no mario exists, use a spoof address. saves us checking for null pointers
         }
-        for (i = 0; i < 8; i++) {
+        for (i = 0; i < 8; i++) { // tick down timers for all 8 active codes. if the time runs out, it
+                                  // disables the code.
             if (codeTimers[i]) {
                 codeTimers[i]--;
                 if (!codeTimers[i]) {
@@ -407,74 +413,77 @@ void chaos_processing() {
                 }
             }
         }
-        if (newCodeTimer++ > CODELENGTH) {
+        if (newCodeTimer++ > CODELENGTH) { // minimum wait time for a new code
             newCodeTimer = 0;
-            while (j > CODECOUNT) {
-                j = random_u16() & 0x7f;
-            }
-            i = random_u16() & 0x07;
-            codeSelected[i] = j;
-            codeTimers[i] = timer[j];
-            if (j == 5) {
-                if (gCurrLevelNum != LEVEL_CASTLE_GROUNDS) {
-                    sWarpDest.type = 2;
-                    codeClear(5);
-                }
-            }
-            if (j == 7) {
-                DL = segmented_to_virtual(0x07000000);
-                while (sizecurrent < searchsize) {
-                    if (*((u32 *) (DL)) == 0xFD100000) {
-                        *((u32 *) (DL + 4)) = segmented_to_virtual(&toadface);
+            j = random_u16() % CODECOUNT; // select a code
+            i = random_u16() & 0x07;      // select an index for the code to exist in
+            codeSelected[i] = j;          // turn on code number j
+            codeTimers[i] = timer[j];     // predetermined timers for some codes
+            switch (j) {                  // codes that only do stuff on activation
+                case 5:
+                    if (j == 5) {
+                        if (gCurrLevelNum != LEVEL_CASTLE_GROUNDS) {
+                            sWarpDest.type = 2;
+                            codeClear(5);
+                        }
                     }
-                    DL += 8;
-                    sizecurrent += 8;
-                }
-                DL = segmented_to_virtual(0x05000000);
-                sizecurrent = 0;
-                while (sizecurrent < searchsize) {
-                    if (*((u32 *) (DL)) == 0xFD100000) {
-                        *((u32 *) (DL + 4)) = segmented_to_virtual(&toadface);
+                    break;
+                case 7:
+                    DL = segmented_to_virtual(0x07000000);
+                    while (sizecurrent < searchsize) {
+                        if (*((u32 *) (DL)) == 0xFD100000) {
+                            *((u32 *) (DL + 4)) = segmented_to_virtual(&toadface);
+                        }
+                        DL += 8;
+                        sizecurrent += 8;
                     }
-                    DL += 8;
-                    sizecurrent += 8;
-                }
-                DL = segmented_to_virtual(0x06000000);
-                sizecurrent = 0;
-                while (sizecurrent < searchsize) {
-                    if (*((u32 *) (DL)) == 0xFD100000) {
-                        *((u32 *) (DL + 4)) = segmented_to_virtual(&toadface);
+                    DL = segmented_to_virtual(0x05000000);
+                    sizecurrent = 0;
+                    while (sizecurrent < searchsize) {
+                        if (*((u32 *) (DL)) == 0xFD100000) {
+                            *((u32 *) (DL + 4)) = segmented_to_virtual(&toadface);
+                        }
+                        DL += 8;
+                        sizecurrent += 8;
                     }
-                    DL += 8;
-                    sizecurrent += 8;
-                }
-            }
-            if (j == 12) {
-                gLakituState.keyDanceRoll = random_u16() & 0x3fff - 0x2000;
-            }
-            if (j == 26) {
-                quicktime = 60;
-            }
-            if (j == 32) {
-                spawn_object(gMarioObject, MODEL_1UP, bhv1Down);
-            }
-            if (j == 36) {
-                spawn_object(gMarioState->marioObj, 0, bhvStrongWindParticle);
-            }
-            if (j == 60) {
-                if (!sTransitionTimer && !sDelayedWarpTimer) {
-                    i = random_u16() & 0x7f;
-                    if (i != 20) {
-                        level_set_transition(-1, NULL);
-                        create_dialog_box(i);
+                    DL = segmented_to_virtual(0x06000000);
+                    sizecurrent = 0;
+                    while (sizecurrent < searchsize) {
+                        if (*((u32 *) (DL)) == 0xFD100000) {
+                            *((u32 *) (DL + 4)) = segmented_to_virtual(&toadface);
+                        }
+                        DL += 8;
+                        sizecurrent += 8;
                     }
-                }
-            }
-            if (j == 95) {
-                gMarioState->numLives--;
-                play_sound(SOUND_GENERAL2_1UP_APPEAR, gDefaultSoundArgs);
+                    break;
+                case 12:
+                    gLakituState.keyDanceRoll = random_u16() & 0x3fff - 0x2000;
+                    break;
+                case 26:
+                    quicktime = 60;
+                    break;
+                case 32:
+                    spawn_object(gMarioObject, MODEL_1UP, bhv1Down);
+                    break;
+                case 36:
+                    spawn_object(gMarioState->marioObj, 0, bhvStrongWindParticle);
+                    break;
+                case 60:
+                    if (!sTransitionTimer && !sDelayedWarpTimer) {
+                        i = random_u16()% 170;
+                        if (i != 20) {
+                            level_set_transition(-1, NULL);
+                            create_dialog_box(i);
+                        }
+                    }
+                    break;
+                case 95:
+                    gMarioState->numLives--;
+                    play_sound(SOUND_GENERAL2_1UP_APPEAR, gDefaultSoundArgs);
+                    break;
             }
         }
+        //these codes can be controlled from within the chaos loop
         if (!codeActive(12)) {
             gLakituState.keyDanceRoll = 0;
         }
@@ -494,7 +503,6 @@ void chaos_processing() {
         if (codeActive(21)) {
             gMarioState->healCounter -= 3;
         }
-
         if (codeActive(24)) {
             if (gMarioState->floor) {
                 if (gMarioState->floor->force != 0x7777) {
@@ -538,12 +546,12 @@ void chaos_processing() {
             gMarioState->faceAngle[1] += 0x180;
         }
         if (codeActive(30)) {
-            gMarioState->pos[0] -= sins(gMarioState->faceAngle[1]) * 30.f;
-            gMarioState->pos[2] -= coss(gMarioState->faceAngle[1]) * 30.f;
+            gMarioState->pos[0] -= sins(gMarioState->faceAngle[1]) * 8.f;
+            gMarioState->pos[2] -= coss(gMarioState->faceAngle[1]) * 8.f;
         }
         if (codeActive(67)) {
-            gMarioState->pos[0] += sins(gMarioState->faceAngle[1]) * 50.f;
-            gMarioState->pos[2] += coss(gMarioState->faceAngle[1]) * 50.f;
+            gMarioState->pos[0] += sins(gMarioState->faceAngle[1]) * 10.f;
+            gMarioState->pos[2] += coss(gMarioState->faceAngle[1]) * 10.f;
         }
         if (codeActive(33)) {
             if (gMarioState->action == ACT_IDLE) {
@@ -586,15 +594,12 @@ void chaos_processing() {
         if (codeActive(87)) {
             gMarioState->flags &= ~(MARIO_ACTION_SOUND_PLAYED | MARIO_MARIO_SOUND_PLAYED);
         }
-        /* if (codeActive(90)) {
-             gMarioState->action = ACT_DEBUG_FREE_MOVE;
-         } else {
-             if (gMarioState->action == ACT_DEBUG_FREE_MOVE) {
-                 gMarioState->action = ACT_FREEFALL;
-             }
-         }*/
+
+        // add processing for more codes here:
+
     } else {
-        timer[37] = 300;
+        timer[37] =
+            300; // sets up game memory, doesnt need to run every frame but i dont want to make changes
         timer[50] = 30;
         timer[51] = 300;
         timer[56] = 300;
@@ -607,6 +612,7 @@ void chaos_processing() {
         timer[90] = 150;
     }
 
+    // debug
     /*print_text_fmt_int(10, 10, "%d", codeSelected[0]);
     print_text_fmt_int(40, 10, "%d", codeSelected[1]);
     print_text_fmt_int(70, 10, "%d", codeSelected[2]);
