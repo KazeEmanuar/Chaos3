@@ -327,7 +327,7 @@ u8 codeSelected[] = { 0, 0, 0, 0, 0, CODETEST, CODETEST, CODETEST };
 u16 codeTimers[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 #define CODECOUNT 100
 u16 timer[CODECOUNT] = {
-    /*000*/ 0,   0, 120, 300, 0, 0, 0, 0, 0, 180, /*010*/ 0,   0, 0, 0, 0, 0, 0, 0,   0, 0,
+    /*000*/ 0,   0, 120, 300, 0, 0, 0, 0, 60, 180, /*010*/ 0,   0, 0, 0, 0, 0, 0, 0,   0, 0,
     /*020*/ 200, 0, 0,   0,   0, 0, 0, 0, 0, 0,   /*030*/ 300, 0, 0, 0, 0, 0, 0, 300, 0, 0,
     /*040*/ 0,   30, 0,   0,   0, 0, 0, 0, 0, 0,   /*050*/ 30,   120, 0, 0, 0, 0, 300, 0,   0, 0,
     /*060*/ 300,   0, 0,   0,   0, 0, 0, 0, 0, 0,   /*070*/ 0,   60, 0, 600, 0, 0, 0, 0,   0, 0,
@@ -597,20 +597,7 @@ void chaos_processing() {
 
         // add processing for more codes here:
 
-    } else {
-        timer[37] =
-            300; // sets up game memory, doesnt need to run every frame but i dont want to make changes
-        timer[50] = 30;
-        timer[51] = 300;
-        timer[56] = 300;
-        timer[61] = 150;
-        timer[72] = 60;
-        timer[74] = 300;
-        timer[80] = 300;
-        timer[82] = 300;
-        timer[84] = 150;
-        timer[90] = 150;
-    }
+    } 
 
     // debug
     /*print_text_fmt_int(10, 10, "%d", codeSelected[0]);

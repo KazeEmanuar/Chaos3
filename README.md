@@ -105,20 +105,28 @@ POSITIVE: these help the player (very rare)
 098: AESTHETIC | GAMEPLAY lanky mario (scale him up on y axis, slowly, until the code runs out, hitbox too)
 099: GAMEPLAY hyperaggressive boos (also go faster)
 100: GAMEPLAY | MESSY mario instantly turns to intended yaw
+101: add to [0][0] in the perspective matrix by a small random float
+102: add a translation to every animation bone (lanky time)
+103: turn all of marios limbs into mario heads
+104: add a random pitchshift to every note (the band is not having a good day)
+105: bosses can't be killed
+106: cannons shoot at insane speed
+107: doors are locked or unlocked depending on what they are not supposed to be
+108: 
+109:
+110:
+111:
+112:
+113:
+114:
+115:
+116:
+117:
+118:
+119:
+120:
 
 
-
-TODO:
-time limit a lot of bad codes
-	- high gravity
-	- coin subtraction
-	- tornado
-make backwards push MUCH weaker
-make forwards push MUCH weaker
-remove bad codes?
-
-new code ideas:
-mess with some matrix math for visual effects
 
 
 
