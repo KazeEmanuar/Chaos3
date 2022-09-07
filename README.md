@@ -109,33 +109,62 @@ POSITIVE: these help the player (very rare)
 102: add a translation to every animation bone (lanky time)
 103: turn all of marios limbs into mario heads
 104: add a random pitchshift to every note (the band is not having a good day)
-105: bosses can't be killed
+105: bosses don't lose health (bowser/whomp/wiggler/king bob omb)
 106: cannons shoot at insane speed
 107: doors are locked or unlocked depending on what they are not supposed to be
-108: 
-109:
-110:
-111:
-112:
-113:
-114:
-115:
-116:
-117:
-118:
-119:
-120:
+108: goomba face replaced with mario face
+109: mario turns green and slippery and his voice gets high pitched like luigi
+110: trees act like billboarded signs
+111: solid objects are not solid
+112: all hitboxes double in size
+113: every NPC is stuck at animation frame 0
+114: put mario on a koopashell
+115: stars dont boot you out, just give you the save and quit dialog
+116: wallkicks dont work
+117: star select always defaults to star 1
+118: slide timer goes 60% faster (use rng)
+119: all goombas spawn tiny
+120: toads dont spawn
+121: baby penguins become carryable cork boxes (make the mama react to them)
+122: 8 scuttlebugs spawn around mario (if the level has them)
+123: if you pick up an enemy, the enemy picks you up instead
+124: half all object gravity
+125: chain chomp frees himself (mario becomes his parent pointer)
+126: infinite water height for mario only
+127: marios wall hitbox doubles in size
+128: ceilings stop working
+129: every treasure chest is the wrong one
+130: exclamation boxes spawn a random thing out of the list (not koopashells because of crash)
+131: any red coin instantly spawns the red coin star
+132: cutscenes have a really long awkward ending
+133: textboxes are misspelled (random letters are randomly wrong)
+134: every object spawns in at scales between .95 and 1.05
+135: some solid objects start acting like thwomps
+136: marios butt burn lasts forever
+137: 
+138: 
+139: 
+140: 
+141: 
+142: 
+143: 
+144: 
+145: 
+146: 
+147: 
+148: 
+149: 
+150: 
 
 
 
-
-
-kaze:
+----------------------------------------
+plans for twitch integration:
 make an array at 803f0000 that holds 4 byte timers for every effect, sorted by ID
 make an array that holds prior timers at 803f0400
 the effects that trigger on activation do stuff once the new timer is bigger than the old timer
 
-melon:
+program frontend:
 make the streamer able to put a "base chaos frequency". this has to be put in seconds. recommended number: 5-10 (higher number: easier). write this number to 803F0800
 make the streamer able to put a "base chaos duration". this has to be put in seconds. recommended number: 30. write this number to 803F0804
 
