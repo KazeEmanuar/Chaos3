@@ -322,22 +322,33 @@ void change_area(s32 index) {
     }
 }
 
-#define CODETEST 82
+#define CODETEST 111
 u8 codeSelected[] = { 0, 0, 0, 0, 0, CODETEST, CODETEST, CODETEST };
 u16 codeTimers[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-#define CODECOUNT 100
+#define CODECOUNT 150
 u16 timer[CODECOUNT] = {
-    /*000*/ 0,   0, 120, 300, 0, 0, 0, 0, 60, 180, /*010*/ 0,   0, 0, 0, 0, 0, 0, 0,   0, 0,
-    /*020*/ 200, 0, 0,   0,   0, 0, 0, 0, 0, 0,   /*030*/ 300, 0, 0, 0, 0, 0, 0, 300, 0, 0,
-    /*040*/ 0,   30, 0,   0,   0, 0, 0, 0, 0, 0,   /*050*/ 30,   120, 0, 0, 0, 0, 300, 0,   0, 0,
-    /*060*/ 300,   0, 0,   0,   0, 0, 0, 0, 0, 0,   /*070*/ 0,   60, 0, 600, 0, 0, 0, 0,   0, 0,
-    /*080*/ 300,   0, 150,   150,   0, 0, 0, 0, 300, 0,   /*090*/ 150,   0, 0, 0, 0, 0, 0, 0,   0, 0,
+    /*000*/ 0,   0,   120, 300, 0, 0, 0,   0,   60,  180,
+    /*010*/ 0,   0,   0,   0,   0, 0, 0,   0,   0,   0,
+    /*020*/ 200, 0,   0,   0,   0, 0, 0,   0,   0,   0,
+    /*030*/ 300, 0,   0,   0,   0, 0, 0,   300, 0,   0,
+    /*040*/ 0,   30,  0,   0,   0, 0, 0,   0,   0,   0,
+    /*050*/ 30,  120, 0,   0,   0, 0, 300, 0,   0,   0,
+    /*060*/ 300, 0,   0,   0,   0, 0, 0,   0,   0,   0,
+    /*070*/ 0,   60,  0,   600, 0, 0, 0,   0,   0,   0,
+    /*080*/ 300, 0,   150, 150, 0, 0, 0,   0,   300, 0,
+    /*090*/ 150, 0,   0,   0,   0, 0, 0,   0,   0,   0,
+    /*100*/ 0,   0,   0,   0,   0, 0, 0,   0,   0,   0,
+    /*110*/ 0,   0,   0,   0,   0, 0, 0,   0,   0,   0,
+    /*120*/ 0,   0,   0,   0,   0, 0, 0,   0,   0,   0,
+    /*130*/ 0,   0,   0,   0,   0, 0, 0,   0,   0,   0,
+    /*140*/ 0,   0,   0,   0,   0, 0, 0,   0,   0,   0,
 };
 /*
 
         timer[84] = 150;
         timer[90] = 150;*/
 u8 quicktime = 0;
+u8 quicktime2 = 0;
 u8 validTypes[] = { SURFACE_DEFAULT,
                     SURFACE_BURNING,
                     SURFACE_SLOW,
@@ -393,16 +404,20 @@ struct Object *spawn_object(struct Object *parent, s32 model, const BehaviorScri
 #define searchsize 0x5000
 extern const u8 toadface[];
 int newCodeTimer = 0;
+#include "actors/common0.h"
+#include "actors/group0.h"
 extern struct SequencePlayer gSequencePlayers[3];
 #define CODELENGTH 150
 void chaos_processing() {
     int i;
     int j = 999;
     u8 *DL = 0;
+    Gfx *a;
     int sizecurrent = 0;
     if (gCurrLevelNum != 1) {
         if (!gMarioState->marioObj) {
-            gMarioState->marioObj = 0x803ffC00; //if no mario exists, use a spoof address. saves us checking for null pointers
+            gMarioState->marioObj = 0x803ffC00; // if no mario exists, use a spoof address. saves us
+                                                // checking for null pointers
         }
         for (i = 0; i < 8; i++) { // tick down timers for all 8 active codes. if the time runs out, it
                                   // disables the code.
@@ -416,6 +431,7 @@ void chaos_processing() {
         if (newCodeTimer++ > CODELENGTH) { // minimum wait time for a new code
             newCodeTimer = 0;
             j = random_u16() % CODECOUNT; // select a code
+            j = 108;
             i = random_u16() & 0x07;      // select an index for the code to exist in
             codeSelected[i] = j;          // turn on code number j
             codeTimers[i] = timer[j];     // predetermined timers for some codes
@@ -470,7 +486,7 @@ void chaos_processing() {
                     break;
                 case 60:
                     if (!sTransitionTimer && !sDelayedWarpTimer) {
-                        i = random_u16()% 170;
+                        i = random_u16() % 170;
                         if (i != 20) {
                             level_set_transition(-1, NULL);
                             create_dialog_box(i);
@@ -481,9 +497,23 @@ void chaos_processing() {
                     gMarioState->numLives--;
                     play_sound(SOUND_GENERAL2_1UP_APPEAR, gDefaultSoundArgs);
                     break;
+                case 108:
+                    //give goomba marios face instead of goomba
+                    if (((Gfx *)segmented_to_virtual(goomba_seg8_dl_0801B5C8))->words.w1 == (u32)goomba_seg8_dl_0801B560){
+                        a = segmented_to_virtual(goomba_seg8_dl_0801B5C8);
+                        a->words.w1 = mario_cap_on_eyes_front;
+                        gSPEndDisplayList(&a[1]);
+                        a = segmented_to_virtual(goomba_seg8_dl_0801B5F0);
+                        a->words.w1 = mario_cap_on_eyes_front;
+                        gSPEndDisplayList(&a[1]);
+                    }
+                    break;
+                case 110:
+                    quicktime2 = 60;
+                    break;
             }
         }
-        //these codes can be controlled from within the chaos loop
+        // these codes can be controlled from within the chaos loop
         if (!codeActive(12)) {
             gLakituState.keyDanceRoll = 0;
         }
@@ -542,6 +572,17 @@ void chaos_processing() {
                 play_sound(SOUND_GENERAL2_RIGHT_ANSWER, gDefaultSoundArgs);
             }
         }
+        if (quicktime2) {
+            quicktime2--;
+            print_text_fmt_int(40, 60, "PRESS DPAD DOWN TO DIE", 0);
+            if (!quicktime2) {
+                gMarioState->health = 0;
+            }
+            if (gMarioState->controller->buttonPressed & D_JPAD) {
+                quicktime2 = 0;
+                play_sound(SOUND_GENERAL2_RIGHT_ANSWER, gDefaultSoundArgs);
+            }
+        }
         if (codeActive(28)) {
             gMarioState->faceAngle[1] += 0x180;
         }
@@ -596,8 +637,7 @@ void chaos_processing() {
         }
 
         // add processing for more codes here:
-
-    } 
+    }
 
     // debug
     /*print_text_fmt_int(10, 10, "%d", codeSelected[0]);

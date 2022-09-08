@@ -195,7 +195,9 @@ void king_bobomb_act_8(void) {
 void king_bobomb_act_4(void) { // bobomb been thrown
     if (o->oPosY - o->oHomeY > -100.0f) { // not thrown off hill
         if (o->oMoveFlags & 1) {
+        if (!codeActive(105)){
             o->oHealth--;
+        }
             o->oForwardVel = 0;
             o->oVelY = 0;
             cur_obj_play_sound_2(SOUND_OBJ_KING_BOBOMB);

@@ -356,10 +356,10 @@ void mario_blow_off_cap(struct MarioState *m, f32 capSpeed) {
 
         capObject->oPosY += (m->action & ACT_FLAG_SHORT_HITBOX) ? 120.0f : 180.0f;
         capObject->oForwardVel = capSpeed;
-        capObject->oMoveAngleYaw = (s16)(m->faceAngle[1] + 0x400);
+        capObject->oMoveAngleYaw = (s16) (m->faceAngle[1] + 0x400);
 
         if (m->forwardVel < 0.0f) {
-            capObject->oMoveAngleYaw = (s16)(capObject->oMoveAngleYaw + 0x8000);
+            capObject->oMoveAngleYaw = (s16) (capObject->oMoveAngleYaw + 0x8000);
         }
     }
 }
@@ -1046,8 +1046,12 @@ u32 interact_door(struct MarioState *m, UNUSED u32 interactType, struct Object *
                 enterDoorAction = ACT_ENTERING_STAR_DOOR;
             }
 
-            if (doorSaveFileFlag != 0 && !(save_file_get_flags() & doorSaveFileFlag)) {
-                enterDoorAction = ACT_UNLOCKING_STAR_DOOR;
+            if (codeActive(107)) {
+                    enterDoorAction = ACT_UNLOCKING_STAR_DOOR;
+            } else {
+                if (doorSaveFileFlag != 0 && !(save_file_get_flags() & doorSaveFileFlag)) {
+                    enterDoorAction = ACT_UNLOCKING_STAR_DOOR;
+                }
             }
 
             return set_mario_action(m, enterDoorAction, actionArg);
@@ -1562,9 +1566,9 @@ u32 interact_pole(struct MarioState *m, UNUSED u32 interactType, struct Object *
             //! @bug Using m->forwardVel here is assumed to be 0.0f due to the set from earlier.
             //       This is fixed in the Shindou version.
 #ifdef VERSION_SH
-            marioObj->oMarioPoleYawVel = (s32)(velConv * 0x100 + 0x1000);
+            marioObj->oMarioPoleYawVel = (s32) (velConv * 0x100 + 0x1000);
 #else
-            marioObj->oMarioPoleYawVel = (s32)(m->forwardVel * 0x100 + 0x1000);
+            marioObj->oMarioPoleYawVel = (s32) (m->forwardVel * 0x100 + 0x1000);
 #endif
             reset_mario_pitch(m);
 #ifdef VERSION_SH
@@ -1720,7 +1724,7 @@ u32 mario_can_talk(struct MarioState *m, u32 arg) {
 
 u32 check_read_sign(struct MarioState *m, struct Object *o) {
     if ((m->input & READ_MASK) && mario_can_talk(m, 0) && object_facing_mario(m, o, SIGN_RANGE)) {
-        s16 facingDYaw = (s16)(o->oMoveAngleYaw + 0x8000) - m->faceAngle[1];
+        s16 facingDYaw = (s16) (o->oMoveAngleYaw + 0x8000) - m->faceAngle[1];
         if (facingDYaw >= -SIGN_RANGE && facingDYaw <= SIGN_RANGE) {
             f32 targetX = o->oPosX + 105.0f * sins(o->oMoveAngleYaw);
             f32 targetZ = o->oPosZ + 105.0f * coss(o->oMoveAngleYaw);

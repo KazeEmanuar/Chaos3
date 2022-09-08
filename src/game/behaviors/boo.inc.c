@@ -596,7 +596,9 @@ static void big_boo_spawn_merry_go_round_star(void) {
 
 static void big_boo_act_3(void) {
     if (o->oTimer == 0) {
-        o->oHealth--;
+        if (!codeActive(105)){
+            o->oHealth--;
+        }
     }
 
     if (o->oHealth == 0) {

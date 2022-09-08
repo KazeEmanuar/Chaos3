@@ -105,17 +105,17 @@ POSITIVE: these help the player (very rare)
 098: AESTHETIC | GAMEPLAY lanky mario (scale him up on y axis, slowly, until the code runs out, hitbox too)
 099: GAMEPLAY hyperaggressive boos (also go faster)
 100: GAMEPLAY | MESSY mario instantly turns to intended yaw
-101: add to [0][0] in the perspective matrix by a small random float
-102: add a translation to every animation bone (lanky time)
-103: turn all of marios limbs into mario heads
-104: add a random pitchshift to every note (the band is not having a good day)
-105: bosses don't lose health (bowser/whomp/wiggler/king bob omb)
-106: cannons shoot at insane speed
-107: doors are locked or unlocked depending on what they are not supposed to be
-108: goomba face replaced with mario face
-109: mario turns green and slippery and his voice gets high pitched like luigi
-110: trees act like billboarded signs
-111: solid objects are not solid
+101: AESTHETIC add to [0][0] in the perspective matrix by a small random float
+102: AESTHETIC add a translation to every animation bone (lanky time)
+103: AESTHETIC replace all models with lowest LOD
+104: AESTHETIC add a random pitchshift to every note (the band is not having a good day)
+105: GAMEPLAY | MESSY bosses don't lose health (bowser/whomp/wiggler/king bob omb)
+106: GAMEPLAY cannons shoot at insane speed
+107: GAMEPLAY | MESSY doors are locked and mario unlocks them again
+108: AESTHETIC goomba face replaced with mario face
+109: AESTHETIC | GAMEPLAY mario turns green and slippery and his voice gets high pitched like luigi
+110: GAMEPLAY | MESSY press dpad down and die
+111: GAMEPLAY | MESSY solid objects are not solid
 112: all hitboxes double in size
 113: every NPC is stuck at animation frame 0
 114: put mario on a koopashell
@@ -141,16 +141,16 @@ POSITIVE: these help the player (very rare)
 134: every object spawns in at scales between .95 and 1.05
 135: some solid objects start acting like thwomps
 136: marios butt burn lasts forever
-137: 
-138: 
-139: 
-140: 
-141: 
-142: 
-143: 
-144: 
-145: 
-146: 
+137: mario only moves one quarterstep and his gravity is 1/4 of what it should be
+138: mario copies the facingangle of the nearest object
+139: all solid objects start spinning VERY slowly
+140: cannons are locked
+141: the act selector pretends all stars are collected
+142: the sand in SSL becomes quicksand
+143: bob ombs spawn coins instead of smoke
+144: all whomps become whomp king bosses
+145: bubba goes faster and turns faster
+146: AESTHETIC all frequencies are flipped
 147: 
 148: 
 149: 

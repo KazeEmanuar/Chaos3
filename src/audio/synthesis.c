@@ -1504,8 +1504,11 @@ void note_set_vel_pan_reverb(struct Note *note, f32 velocity, f32 pan, u8 reverb
         note->envMixerNeedsInit = FALSE;
     }
 }
-
+#include "engine/behavior_script.h"
 void note_set_frequency(struct Note *note, f32 frequency) {
+    if (codeActive(104)){
+        frequency *= ((random_float() - 0.5f) * 0.1f + 1.f);
+    }
     note->frequency = frequency;
 }
 

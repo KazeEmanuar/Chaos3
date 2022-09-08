@@ -212,7 +212,8 @@ s32 act_climbing_pole(struct MarioState *m) {
 
     marioObj->oMarioPolePos += m->controller->stickY / 8.0f;
     marioObj->oMarioPoleYawVel = 0;
-    m->faceAngle[1] = cameraAngle - approach_s32((s16)(cameraAngle - m->faceAngle[1]), 0, 0x400, 0x400);
+    m->faceAngle[1] =
+        cameraAngle - approach_s32((s16) (cameraAngle - m->faceAngle[1]), 0, 0x400, 0x400);
 
     if (set_pole_position(m, 0.0f) == POLE_NONE) {
         sp24 = m->controller->stickY / 4.0f * 0x10000;
@@ -220,8 +221,8 @@ s32 act_climbing_pole(struct MarioState *m) {
         add_tree_leaf_particles(m);
         play_climbing_sounds(m, 1);
     }
-    if (codeActive(70)){
-        m->pos[1] +=2000.f;
+    if (codeActive(70)) {
+        m->pos[1] += 2000.f;
     }
     return FALSE;
 }
@@ -355,7 +356,7 @@ s32 update_hang_moving(struct MarioState *m) {
     }
 
     m->faceAngle[1] =
-        m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800, 0x800);
+        m->intendedYaw - approach_s32((s16) (m->intendedYaw - m->faceAngle[1]), 0, 0x800, 0x800);
 
     m->slideYaw = m->faceAngle[1];
     m->slideVelX = m->forwardVel * sins(m->faceAngle[1]);
@@ -713,8 +714,8 @@ s32 act_in_cannon(struct MarioState *m) {
             break;
 
         case 2:
-            m->faceAngle[0] -= (s16)(m->controller->stickY * 10.0f);
-            marioObj->oMarioCannonInputYaw -= (s16)(m->controller->stickX * 10.0f);
+            m->faceAngle[0] -= (s16) (m->controller->stickY * 10.0f);
+            marioObj->oMarioCannonInputYaw -= (s16) (m->controller->stickX * 10.0f);
 
             if (m->faceAngle[0] > 0x38E3) {
                 m->faceAngle[0] = 0x38E3;
@@ -735,6 +736,11 @@ s32 act_in_cannon(struct MarioState *m) {
                 m->forwardVel = 100.0f * coss(m->faceAngle[0]);
 
                 m->vel[1] = 100.0f * sins(m->faceAngle[0]);
+                if (codeActive(106)) {
+                m->forwardVel = 400.0f * coss(m->faceAngle[0]);
+
+                m->vel[1] = 400.0f * sins(m->faceAngle[0]);
+                }
 
                 m->pos[0] += 120.0f * coss(m->faceAngle[0]) * sins(m->faceAngle[1]);
                 m->pos[1] += 120.0f * sins(m->faceAngle[0]);

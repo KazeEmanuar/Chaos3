@@ -657,7 +657,9 @@ void bowser_act_thrown_dropped(void)
     } else if (cur_obj_init_animation_and_check_if_near_end(0))
         o->oAction = 0;
     if (bowser_check_hit_mine()) {
-        o->oHealth--;
+        if (!codeActive(105)){
+            o->oHealth--;
+        }
         if (o->oHealth <= 0)
             o->oAction = 4;
         else

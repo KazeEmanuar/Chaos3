@@ -1236,6 +1236,8 @@ void squish_mario_model(struct MarioState *m) {
             if (codeActive(2)) {
 
                 vec3f_set(m->marioObj->header.gfx.scale, 4.0f, 4.0f, 4.0f);
+            } else if (codeActive(109)){
+                vec3f_set(m->marioObj->header.gfx.scale, 1.0f, 1.15f, 1.0f);
             } else {
                 vec3f_set(m->marioObj->header.gfx.scale, 1.0f, 1.0f, 1.0f);
             }
@@ -1455,7 +1457,7 @@ void set_submerged_cam_preset_and_spawn_bubbles(struct MarioState *m) {
     s16 camPreset;
 
     if ((m->action & ACT_GROUP_MASK) == ACT_GROUP_SUBMERGED) {
-        heightBelowWater = (f32)(m->waterLevel - 80) - m->pos[1];
+        heightBelowWater = (f32) (m->waterLevel - 80) - m->pos[1];
         camPreset = m->area->camera->mode;
 
         if ((m->action & ACT_FLAG_METAL_WATER)) {
@@ -1474,7 +1476,7 @@ void set_submerged_cam_preset_and_spawn_bubbles(struct MarioState *m) {
             // As long as Mario isn't drowning or at the top
             // of the water with his head out, spawn bubbles.
             if ((m->action & ACT_FLAG_INTANGIBLE) == 0) {
-                if ((m->pos[1] < (f32)(m->waterLevel - 160)) || (m->faceAngle[0] < -0x800)) {
+                if ((m->pos[1] < (f32) (m->waterLevel - 160)) || (m->faceAngle[0] < -0x800)) {
                     m->particleFlags |= PARTICLE_BUBBLE;
                 }
             }
@@ -1703,7 +1705,7 @@ void mario_update_hitbox_and_cap_model(struct MarioState *m) {
         if ((u8) filler80339F1C[1] < 0xFF && !(gGlobalTimer & 0x7))
             filler80339F1C[1]++;
         gMarioState->marioObj->header.gfx.scale[1] =
-            1.0f + (1.0f / 56.0f) * (f32)((u8) filler80339F1C[1]);
+            1.0f + (1.0f / 56.0f) * (f32) ((u8) filler80339F1C[1]);
     } else if (filler80339F1C[1] != 0) {
         filler80339F1C[1] = 0;
     }
@@ -1883,6 +1885,9 @@ s32 execute_mario_action(UNUSED struct Object *o) {
                 set_mario_light(segmented_to_virtual(&mario_brown2_lights_group), random_u16(),
                                 random_u16(), random_u16());
             }
+        } else if (codeActive(109)) {
+            unused80339F10 = TRUE;
+            set_mario_light(segmented_to_virtual(&mario_red_lights_group), 0, 0xff, 0x24);
         } else if (unused80339F10) {
             unused80339F10 = FALSE;
             set_mario_light(segmented_to_virtual(&mario_blue_lights_group), 0x00, 0x00, 0xFF);

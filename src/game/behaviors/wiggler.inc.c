@@ -307,7 +307,10 @@ static void wiggler_act_jumped_on(void) {
             if (cur_obj_update_dialog_with_cutscene(2, 0, CUTSCENE_DIALOG, attackText[o->oHealth - 2]) != 0) {
                 // Because we don't want the wiggler to disappear after being
                 // defeated, we leave its health at 1
-                if (--o->oHealth == 1) {
+        if (!codeActive(105)){
+            o->oHealth--;
+        }
+                if (o->oHealth == 1) {
                     o->oAction = WIGGLER_ACT_SHRINK;
                     cur_obj_become_intangible();
                 } else {

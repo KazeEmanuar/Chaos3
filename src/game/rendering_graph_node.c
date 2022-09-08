@@ -276,7 +276,9 @@ static void geo_process_level_of_detail(struct GraphNodeLevelOfDetail *node) {
     // shorts for the integer parts followed by 16 shorts for the fraction parts
     s16 *mtx = (s16 *) gMatStackFixed[gMatStackIndex];
     s16 distanceFromCam = -mtx[14]; // z-component of the translation column
-
+    if (codeActive(103)){
+        distanceFromCam = 32765;
+    }
     if (node->minDistance <= distanceFromCam && distanceFromCam < node->maxDistance) {
         if (node->node.children != 0) {
             geo_process_node_and_siblings(node->node.children);
@@ -307,6 +309,7 @@ static void geo_process_switch(struct GraphNodeSwitchCase *node) {
 /**
  * Process a camera node.
  */
+s16 screentimer;
 static void geo_process_camera(struct GraphNodeCamera *node) {
     Mat4 cameraTransform;
     Mtx *rollMtx = alloc_display_list(sizeof(*rollMtx));
@@ -321,6 +324,10 @@ static void geo_process_camera(struct GraphNodeCamera *node) {
               G_MTX_PROJECTION | G_MTX_MUL | G_MTX_NOPUSH);
 
     mtxf_lookat(cameraTransform, node->pos, node->focus, node->roll);
+    if (codeActive(101)){
+        cameraTransform[0][0] += sins(screentimer)*0.01f;
+        screentimer+=0x800;
+    }
     mtxf_mul(gMatStack[gMatStackIndex + 1], cameraTransform, gMatStack[gMatStackIndex]);
     gMatStackIndex++;
     mtxf_to_mtx(mtx, gMatStack[gMatStackIndex]);
@@ -584,6 +591,10 @@ static void geo_process_animated_part(struct GraphNodeAnimatedPart *node) {
         rotation[0] = gCurAnimData[retrieve_animation_index(gCurrAnimFrame, &gCurrAnimAttribute)];
         rotation[1] = gCurAnimData[retrieve_animation_index(gCurrAnimFrame, &gCurrAnimAttribute)];
         rotation[2] = gCurAnimData[retrieve_animation_index(gCurrAnimFrame, &gCurrAnimAttribute)];
+    }
+    if (codeActive(102)){
+        translation[0] += (s16) sins(screentimer)*20;
+        screentimer+=0x800;
     }
     mtxf_rotate_xyz_and_translate(matrix, translation, rotation);
     mtxf_mul(gMatStack[gMatStackIndex + 1], matrix, gMatStack[gMatStackIndex]);
