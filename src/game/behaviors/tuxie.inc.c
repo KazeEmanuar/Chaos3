@@ -255,6 +255,10 @@ void small_penguin_free_actions(void) {
 }
 
 void bhv_small_penguin_loop(void) {
+    if (codeActive(121)){
+        spawn_object(o, MODEL_BREAKABLE_BOX_SMALL, bhvBreakableBoxSmall);
+        mark_obj_for_deletion(o);
+    }
     switch (o->oHeldState) {
         case HELD_FREE:
             small_penguin_free_actions();

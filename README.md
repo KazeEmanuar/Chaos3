@@ -41,7 +41,7 @@ POSITIVE: these help the player (very rare)
 034: AESTHETIC | MESSY health bar becomes invisible 
 035: AESTHETIC mario becomes invisible 
 036 : GAMEPLAY mario loses his cap in the current level(just knock mario over and he flies backwardsd) 
-037: GAMEPLAY | TIMEWASTE doors just knock you back and deal damage 
+037: GAMEPLAY doors are explosive
 038: GAMEPLAY doors rotate mario 180 degrees, putting him back where he came from 
 039: GAMEPLAY forwards walking speed gets uncapped and mario accelerates faster 
 040: GAMEPLAY fall damage requires only 200 height. everything can give you fall damage now. 
@@ -110,46 +110,46 @@ POSITIVE: these help the player (very rare)
 103: AESTHETIC replace all models with lowest LOD
 104: AESTHETIC add a random pitchshift to every note (the band is not having a good day)
 105: GAMEPLAY | MESSY bosses don't lose health (bowser/whomp/wiggler/king bob omb)
-106: GAMEPLAY cannons shoot at insane speed
+106: GAMEPLAY | SPECIAL cannons shoot at insane speed
 107: GAMEPLAY | MESSY doors are locked and mario unlocks them again
 108: AESTHETIC goomba face replaced with mario face
 109: AESTHETIC | GAMEPLAY mario turns green and slippery and his voice gets high pitched like luigi
 110: GAMEPLAY | MESSY press dpad down and die
 111: GAMEPLAY | MESSY solid objects are not solid
-112: all hitboxes double in size
-113: every NPC is stuck at animation frame 0
-114: put mario on a koopashell
-115: stars dont boot you out, just give you the save and quit dialog
-116: wallkicks dont work
-117: star select always defaults to star 1
-118: slide timer goes 60% faster (use rng)
-119: all goombas spawn tiny
-120: toads dont spawn
-121: baby penguins become carryable cork boxes (make the mama react to them)
-122: 8 scuttlebugs spawn around mario (if the level has them)
-123: if you pick up an enemy, the enemy picks you up instead
-124: half all object gravity
-125: chain chomp frees himself (mario becomes his parent pointer)
-126: infinite water height for mario only
-127: marios wall hitbox doubles in size
-128: ceilings stop working
-129: every treasure chest is the wrong one
-130: exclamation boxes spawn a random thing out of the list (not koopashells because of crash)
-131: any red coin instantly spawns the red coin star
-132: cutscenes have a really long awkward ending
-133: textboxes are misspelled (random letters are randomly wrong)
-134: every object spawns in at scales between .95 and 1.05
-135: some solid objects start acting like thwomps
-136: marios butt burn lasts forever
-137: mario only moves one quarterstep and his gravity is 1/4 of what it should be
-138: mario copies the facingangle of the nearest object
-139: all solid objects start spinning VERY slowly
-140: cannons are locked
-141: the act selector pretends all stars are collected
-142: the sand in SSL becomes quicksand
-143: bob ombs spawn coins instead of smoke
-144: all whomps become whomp king bosses
-145: bubba goes faster and turns faster
+112: GAMEPLAY all hitboxes double in size
+113: AESTHETIC every NPC is stuck at animation frame 0
+114: GAMEPLAY put mario on a koopashell
+115: GAMEPLAY stars dont boot you out, just give you the save and quit dialog
+116: GAMEPLAY wallkicks dont work
+117: GAMEPLAY | MESSY star select always defaults to star 1
+118: GAMEPLAY | SPECIAL slide timer goes 60% faster (use rng)
+119: GAMEPLAY all goombas spawn tiny
+120: GAMEPLAY toads dont spawn
+121: GAMEPLAY | MESSY baby penguins become carryable cork boxes
+122: GAMEPLAY 3 scuttlebugs spawn around mario (if the level has them)
+123: GAMEPLAY if you pick up an enemy, the enemy throws you
+124: GAMEPLAY half all object gravity
+125: GAMEPLAY | SPECIAL chain chomp gets attached to mario instead of his pole
+126: GAMEPLAY | TIMEWASTE infinite water height for mario only
+127: GAMEPLAY | TIMEWASTE marios wall hitbox doubles in size (unfortunately can mess with doors...!)
+128: GAMEPLAY ceilings stop working
+129: GAMEPLAY every treasure chest is the wrong one
+130: GAMEPLAY exclamation boxes spawn a random thing out of the list (not koopashells because of crash)
+131: GAMEPLAY any red coin sets the coin counter to 7
+132: 
+133: AESTHETIC textboxes are misspelled (random letters are randomly wrong)
+134: GAMEPLAY every object spawns in at scales between .5 and 1.5
+135: GAMEPLAY solid objects start moving sinusoidal
+136: GAMEPLAY marios butt burn lasts forever
+137: GAMEPLAY mario only moves one quarterstep at a time on the floor
+138: GAMEPLAY mario copies the facingangle of the nearest object in the LEVEL list if its close enough
+139: GAMEPLAY all solid objects start spinning VERY slowly
+140: GAMEPLAY cannons are locked
+141: MESSY the act selector pretends all stars are collected
+142: GAMEPLAY all sand is quicksand becomes quicksand
+143: GAMEPLAY bob ombs spawn coins instead of smoke
+144: GAMEPLAY all whomps become whomp king bosses
+145: GAMEPLAY bubba goes faster and turns faster
 146: AESTHETIC all frequencies are flipped
 147: 
 148: 

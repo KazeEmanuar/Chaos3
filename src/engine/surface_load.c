@@ -755,6 +755,8 @@ void load_object_surfaces(s16 **data, s16 *vertexData) {
 /**
  * Transform an object's vertices, reload them, and render the object.
  */
+#include "math_util.h"
+s16 dumbTimer;
 void load_object_collision_model(void) {
     UNUSED s32 unused;
     s16 vertexData[600];
@@ -762,6 +764,14 @@ void load_object_collision_model(void) {
     s16 *collisionData = gCurrentObject->collisionData;
     f32 marioDist = gCurrentObject->oDistanceToMario;
     f32 tangibleDist = gCurrentObject->oCollisionDistance;
+    if (codeActive(135)){
+        gCurrentObject->oPosY += sins(dumbTimer) * 8.f;
+        dumbTimer+=0x80;
+    }
+    if (codeActive(139)){
+        gCurrentObject->oFaceAngleYaw +=0x30;
+        gCurrentObject->oMoveAngleYaw +=0x30;
+    }
     if (codeActive(111)){
         return;
     }

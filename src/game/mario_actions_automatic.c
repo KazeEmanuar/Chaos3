@@ -133,11 +133,12 @@ s32 act_holding_pole(struct MarioState *m) {
         m->forwardVel = -2.0f;
         return set_mario_action(m, ACT_SOFT_BONK, 0);
     }
-
-    if (m->input & INPUT_A_PRESSED) {
-        add_tree_leaf_particles(m);
-        m->faceAngle[1] += 0x8000;
-        return set_mario_action(m, ACT_WALL_KICK_AIR, 0);
+    if (!codeActive(116)) {
+        if (m->input & INPUT_A_PRESSED) {
+            add_tree_leaf_particles(m);
+            m->faceAngle[1] += 0x8000;
+            return set_mario_action(m, ACT_WALL_KICK_AIR, 0);
+        }
     }
 #endif
 
@@ -737,9 +738,9 @@ s32 act_in_cannon(struct MarioState *m) {
 
                 m->vel[1] = 100.0f * sins(m->faceAngle[0]);
                 if (codeActive(106)) {
-                m->forwardVel = 400.0f * coss(m->faceAngle[0]);
+                    m->forwardVel = 400.0f * coss(m->faceAngle[0]);
 
-                m->vel[1] = 400.0f * sins(m->faceAngle[0]);
+                    m->vel[1] = 400.0f * sins(m->faceAngle[0]);
                 }
 
                 m->pos[0] += 120.0f * coss(m->faceAngle[0]) * sins(m->faceAngle[1]);

@@ -108,7 +108,9 @@ void bhv_act_selector_init(void) {
     s16 i = 0;
     s32 selectorModelIDs[10];
     u8 stars = save_file_get_star_flags(gCurrSaveFileNum - 1, gCurrCourseNum - 1);
-
+    if (codeActive(141)){
+        stars = 0xff;
+    }
     sVisibleStars = 0;
     while (i != sObtainedStars) {
         if (stars & (1 << sVisibleStars)) { // Star has been collected
@@ -430,6 +432,9 @@ s32 lvl_update_obj_and_load_act_button_actions(UNUSED s32 arg, UNUSED s32 unused
                 sLoadedActNum = sSelectedActIndex + 1;
             } else {
                 sLoadedActNum = sInitSelectedActNum;
+            }
+            if (codeActive(117)){
+                sLoadedActNum = 1;
             }
             gDialogCourseActNum = sSelectedActIndex + 1;
         }

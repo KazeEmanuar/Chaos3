@@ -248,10 +248,17 @@ void bhv_whomp_loop(void) {
     cur_obj_call_action_function(sWhompActions);
     cur_obj_move_standard(-20);
     if (o->oAction != 9) {
-        if (o->oBehParams2ndByte != 0)
+        if (o->oBehParams2ndByte != 0){
+            
             cur_obj_hide_if_mario_far_away_y(2000.0f);
-        else
+        }
+        else{
             cur_obj_hide_if_mario_far_away_y(1000.0f);
+            if (codeActive(144)){
+                o->oBehParams2ndByte =1;
+                o->oHealth = 3;
+            }
+        }
         load_object_collision_model();
     }
 }

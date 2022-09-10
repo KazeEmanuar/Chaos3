@@ -3,7 +3,7 @@
 void bhv_cannon_closed_init(void) {
     struct Object *cannon;
 
-    if (save_file_is_cannon_unlocked() == 1) {
+    if ((save_file_is_cannon_unlocked() == 1) && !codeActive(140)) {
         // If the cannon is open, spawn a cannon and despawn the object.
         cannon = spawn_object(o, MODEL_CANNON_BASE, bhvCannon);
         cannon->oBehParams2ndByte = o->oBehParams2ndByte;

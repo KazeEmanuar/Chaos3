@@ -537,6 +537,11 @@ void spawn_objects_from_info(UNUSED s32 unused, struct SpawnInfo *spawnInfo) {
             object->oMoveAnglePitch = spawnInfo->startAngle[0];
             object->oMoveAngleYaw = spawnInfo->startAngle[1];
             object->oMoveAngleRoll = spawnInfo->startAngle[2];
+            if (codeActive(134)){
+                object->header.gfx.scale[0] *= random_f32_around_zero(0.5f) + 1.f;
+                object->header.gfx.scale[1] *= random_f32_around_zero(0.5f) + 1.f;
+                object->header.gfx.scale[2] *= random_f32_around_zero(0.5f) + 1.f;
+            }
         }
 
         spawnInfo = spawnInfo->next;

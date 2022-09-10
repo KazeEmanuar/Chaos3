@@ -111,7 +111,9 @@ void bhv_goomba_triplet_spawner_update(void) {
  */
 void bhv_goomba_init(void) {
     o->oGoombaSize = o->oBehParams2ndByte & GOOMBA_BP_SIZE_MASK;
-
+    if (codeActive(119)){
+        o->oGoombaSize = 2;
+    }
     o->oGoombaScale = sGoombaProperties[o->oGoombaSize].scale;
     o->oDeathSound = sGoombaProperties[o->oGoombaSize].deathSound;
 

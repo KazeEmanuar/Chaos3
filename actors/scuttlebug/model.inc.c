@@ -18,7 +18,7 @@ ALIGNED8 static const u8 scuttlebug_seg6_texture_06010108[] = {
 };
 
 // 0x06010908
-ALIGNED8 static const u8 scuttlebug_seg6_texture_06010908[] = {
+ALIGNED8 const u8 scuttlebug_seg6_texture_06010908[] = {
 #include "actors/scuttlebug/scuttlebug_left_side.rgba16.inc.c"
 };
 

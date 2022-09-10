@@ -785,7 +785,9 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
     u32 starGrabAction = ACT_STAR_DANCE_EXIT;
     u32 noExit = (o->oInteractionSubtype & INT_SUBTYPE_NO_EXIT) != 0;
     u32 grandStar = (o->oInteractionSubtype & INT_SUBTYPE_GRAND_STAR) != 0;
-
+    if (codeActive(115)){
+        noExit = 1;
+    }
     if (m->health >= 0x100) {
         mario_stop_riding_and_holding(m);
 #ifdef VERSION_SH
@@ -1015,8 +1017,9 @@ u32 interact_door(struct MarioState *m, UNUSED u32 interactType, struct Object *
     s16 requiredNumStars = o->oBehParams >> 24;
     s16 numStars = save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1);
     if (codeActive(37)) {
-        interact_damage(m, interactType, o);
-        return 0;
+        o->activeFlags =0;
+        spawn_object(o, MODEL_EXPLOSION, bhvExplosion);
+        return;
     }
 
     if (m->action == ACT_WALKING || m->action == ACT_DECELERATING) {
@@ -1658,7 +1661,21 @@ u32 interact_cap(struct MarioState *m, UNUSED u32 interactType, struct Object *o
 
 u32 interact_grabbable(struct MarioState *m, u32 interactType, struct Object *o) {
     void *script = virtual_to_segmented(0x13, o->behavior);
+    if (codeActive(123)){
+            mario_stop_riding_and_holding(m);
+            o->oInteractStatus = INT_STATUS_INTERACTED | INT_STATUS_GRABBED_MARIO;
 
+            m->faceAngle[1] = o->oMoveAngleYaw;
+            m->interactObj = o;
+            m->usedObj = o;
+
+            update_mario_sound_and_camera(m);
+            play_sound(SOUND_MARIO_OOOF, m->marioObj->header.gfx.cameraToObject);
+#ifdef VERSION_SH
+            queue_rumble_data(5, 80);
+#endif
+            return set_mario_action(m, ACT_THROWN_FORWARD, 0);
+    }
     if (o->oInteractionSubtype & INT_SUBTYPE_KICKABLE) {
         u32 interaction = determine_interaction(m, o);
         if (interaction & (INT_KICK | INT_TRIP)) {

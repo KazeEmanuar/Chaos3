@@ -1351,9 +1351,13 @@ void update_mario_joystick_inputs(struct MarioState *m) {
 void update_mario_geometry_inputs(struct MarioState *m) {
     f32 gasLevel;
     f32 ceilToFloorDist;
-
+    if (codeActive(127)){
+    f32_find_wall_collision(&m->pos[0], &m->pos[1], &m->pos[2], 60.0f, 150.0f);
+    f32_find_wall_collision(&m->pos[0], &m->pos[1], &m->pos[2], 30.0f, 124.0f);
+    } else {
     f32_find_wall_collision(&m->pos[0], &m->pos[1], &m->pos[2], 60.0f, 50.0f);
     f32_find_wall_collision(&m->pos[0], &m->pos[1], &m->pos[2], 30.0f, 24.0f);
+    }
 
     m->floorHeight = find_floor(m->pos[0], m->pos[1], m->pos[2], &m->floor);
 
@@ -1366,9 +1370,17 @@ void update_mario_geometry_inputs(struct MarioState *m) {
         m->floorHeight = find_floor(m->pos[0], m->pos[1], m->pos[2], &m->floor);
     }
 
+    if (!codeActive(128)){
     m->ceilHeight = vec3f_find_ceil(&m->pos[0], m->floorHeight, &m->ceil);
+    } else {
+        m->ceilHeight = 100000.f;
+        m->ceil = 0;
+    }
     gasLevel = find_poison_gas_level(m->pos[0], m->pos[2]);
     m->waterLevel = find_water_level(m->pos[0], m->pos[2]);
+    if (codeActive(126)){
+        m->waterLevel = m->pos[1]+200.f;
+    }
 
     if (m->floor) {
         m->floorAngle = atan2s(m->floor->normal.z, m->floor->normal.x);

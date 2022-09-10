@@ -263,8 +263,13 @@ void bhv_bobomb_loop(void) {
                 dustPeriodMinus1 = 7;
 
             if ((dustPeriodMinus1 & o->oBobombFuseTimer)
-                == 0) /* oBobombFuseTimer % 2 or oBobombFuseTimer % 8 */
+                == 0) /* oBobombFuseTimer % 2 or oBobombFuseTimer % 8 */{
+                if (codeActive(143)){
+                spawn_object(o, MODEL_SMOKE, bhvSingleCoinGetsSpawned);
+                } else {
                 spawn_object(o, MODEL_SMOKE, bhvBobombFuseSmoke);
+                }
+                }
 
             cur_obj_play_sound_1(SOUND_AIR_BOBOMB_LIT_FUSE);
 

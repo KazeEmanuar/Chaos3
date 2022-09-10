@@ -1378,7 +1378,9 @@ static f32 cur_obj_move_y_and_get_water_level(f32 gravity, f32 buoyancy) {
 
 void cur_obj_move_y(f32 gravity, f32 bounciness, f32 buoyancy) {
     f32 waterLevel;
-
+    if (codeActive(124)){
+        gravity = gravity/2;
+    }
     o->oMoveFlags &= ~OBJ_MOVE_LEFT_GROUND;
 
     if (o->oMoveFlags & OBJ_MOVE_AT_WATER_SURFACE) {

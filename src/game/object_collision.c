@@ -30,6 +30,9 @@ int detect_object_hitbox_overlap(struct Object *a, struct Object *b) {
     f32 dz = a->oPosZ - b->oPosZ;
     f32 collisionRadius = a->hitboxRadius + b->hitboxRadius;
     f32 distance = sqrtf(dx * dx + dz * dz);
+    if (codeActive(112)) {
+        distance = distance / 3;
+    }
     if (collisionRadius > distance) {
         f32 sp20 = a->hitboxHeight + sp3C;
         f32 sp1C = b->hitboxHeight + sp38;

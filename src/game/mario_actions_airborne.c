@@ -283,7 +283,7 @@ void update_lava_boost_or_twirling(struct MarioState *m) {
 }
 
 void update_flying_yaw(struct MarioState *m) {
-    s16 targetYawVel = -(s16)(m->controller->stickX * (m->forwardVel / 4.0f));
+    s16 targetYawVel = -(s16) (m->controller->stickX * (m->forwardVel / 4.0f));
 
     if (targetYawVel > 0) {
         if (m->angleVel[1] < 0) {
@@ -312,7 +312,7 @@ void update_flying_yaw(struct MarioState *m) {
 }
 
 void update_flying_pitch(struct MarioState *m) {
-    s16 targetPitchVel = -(s16)(m->controller->stickY * (m->forwardVel / 5.0f));
+    s16 targetPitchVel = -(s16) (m->controller->stickY * (m->forwardVel / 5.0f));
 
     if (targetPitchVel > 0) {
         if (m->angleVel[0] < 0) {
@@ -1030,8 +1030,10 @@ s32 act_burning_jump(struct MarioState *m) {
     set_mario_animation(m, m->actionArg == 0 ? MARIO_ANIM_SINGLE_JUMP : MARIO_ANIM_FIRE_LAVA_BURN);
     m->particleFlags |= PARTICLE_FIRE;
     play_sound(SOUND_MOVING_LAVA_BURN, m->marioObj->header.gfx.cameraToObject);
+    if (!codeActive(136)){
 
     m->marioObj->oMarioBurnTimer += 3;
+    }
 
     m->health -= 10;
     if (m->health < 0x100) {
@@ -1053,7 +1055,10 @@ s32 act_burning_fall(struct MarioState *m) {
 
     set_mario_animation(m, MARIO_ANIM_GENERAL_FALL);
     m->particleFlags |= PARTICLE_FIRE;
+    if (!codeActive(136)){
+
     m->marioObj->oMarioBurnTimer += 3;
+    }
 
     m->health -= 10;
     if (m->health < 0x100) {
@@ -1181,6 +1186,9 @@ u32 common_air_knockback_step(struct MarioState *m, u32 landAction, u32 hardFall
 extern struct Object *spawn_object(struct Object *parent, s32 model, const BehaviorScript *behavior);
 extern const BehaviorScript bhvExplosion[];
 s32 check_wall_kick(struct MarioState *m) {
+    if (codeActive(116)) {
+        return;
+    }
     if ((m->input & INPUT_A_PRESSED) && m->wallKickTimer != 0 && m->prevAction == ACT_AIR_HIT_WALL) {
         if (!codeActive(52)) {
 
@@ -2113,8 +2121,8 @@ s32 act_vertical_wind(struct MarioState *m) {
             break;
     }
 
-    m->marioObj->header.gfx.angle[0] = (s16)(6144.0f * intendedMag * coss(intendedDYaw));
-    m->marioObj->header.gfx.angle[2] = (s16)(-4096.0f * intendedMag * sins(intendedDYaw));
+    m->marioObj->header.gfx.angle[0] = (s16) (6144.0f * intendedMag * coss(intendedDYaw));
+    m->marioObj->header.gfx.angle[2] = (s16) (-4096.0f * intendedMag * sins(intendedDYaw));
     return FALSE;
 }
 

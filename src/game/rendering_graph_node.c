@@ -632,6 +632,9 @@ void geo_set_animation_globals(struct GraphNodeObject_sub *node, s32 hasAnimatio
     }
 
     gCurrAnimFrame = node->animFrame;
+    if (codeActive(113)){
+        gCurrAnimFrame = 0;
+    }
     gCurAnimEnabled = (anim->flags & ANIM_FLAG_5) == 0;
     gCurrAnimAttribute = segmented_to_virtual((void *) anim->index);
     gCurAnimData = segmented_to_virtual((void *) anim->values);

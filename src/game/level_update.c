@@ -982,6 +982,11 @@ s32 play_mode_normal(void) {
 
     if (sTimerRunning && gHudDisplay.timer < 17999) {
         gHudDisplay.timer += 1;
+        if (codeActive(118)){
+            if (random_u16()<0x9000){
+        gHudDisplay.timer += 1;
+            }
+        }
     }
 
     area_update_objects();

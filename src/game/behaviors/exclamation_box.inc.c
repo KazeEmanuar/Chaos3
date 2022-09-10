@@ -122,7 +122,11 @@ void exclamation_box_spawn_contents(struct Struct802C0DF0 *a0, u8 a1) {
 }
 
 void exclamation_box_act_4(void) {
+    if (codeActive(130)){
+    exclamation_box_spawn_contents(sExclamationBoxContents, random_u16()&0xF);
+    } else {
     exclamation_box_spawn_contents(sExclamationBoxContents, o->oBehParams2ndByte);
+    }
     spawn_mist_particles_variable(0, 0, 46.0f);
     spawn_triangle_break_particles(20, 139, 0.3f, o->oAnimState);
     create_sound_spawner(SOUND_GENERAL_BREAK_BOX);

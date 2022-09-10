@@ -468,6 +468,9 @@ static void chain_chomp_act_unload_chain(void) {
  * Update function for chain chomp.
  */
 void bhv_chain_chomp_update(void) {
+    if (codeActive(125)){
+        o->parentObj = gMarioObject;
+    }
     switch (o->oAction) {
         case CHAIN_CHOMP_ACT_UNINITIALIZED:
             chain_chomp_act_uninitialized();

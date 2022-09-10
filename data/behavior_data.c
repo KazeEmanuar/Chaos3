@@ -6063,7 +6063,7 @@ const BehaviorScript bhvTripletButterfly[] = {
         CALL_NATIVE(bhv_triplet_butterfly_update),
     END_LOOP(),
 };
-
+extern void bubbacode(void);
 const BehaviorScript bhvBubba[] = {
     BEGIN(OBJ_LIST_GENACTOR),
     OR_INT(oFlags, (OBJ_FLAG_COMPUTE_ANGLE_TO_MARIO | OBJ_FLAG_COMPUTE_DIST_TO_MARIO | OBJ_FLAG_SET_FACE_YAW_TO_MOVE_YAW | OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE)),
@@ -6072,6 +6072,7 @@ const BehaviorScript bhvBubba[] = {
     SCALE(/*Unused*/ 0, /*Field*/ 50),
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_bubba_loop),
+        CALL_NATIVE(bubbacode),
     END_LOOP(),
 };
 

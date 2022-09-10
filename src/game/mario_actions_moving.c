@@ -1388,7 +1388,10 @@ s32 act_burning_ground(struct MarioState *m) {
         return set_mario_action(m, ACT_BURNING_JUMP, 0);
     }
 
+    if (!codeActive(136)){
+
     m->marioObj->oMarioBurnTimer += 2;
+    }
     if (m->marioObj->oMarioBurnTimer > 160) {
         return set_mario_action(m, ACT_WALKING, 0);
     }

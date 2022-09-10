@@ -480,7 +480,35 @@ void try_print_debug_mario_object_info(void) {
  * Similar to above, but with level information. (checkinfo, mapinfo,
  * stageinfo)
  */
+#include "game/level_update.h"
+struct Object *nearsgf() {
+    struct Object *closestObj = NULL;
+    struct Object *obj;
+    struct ObjectNode *listHead;
+    f32 minDist = 750.f;
+
+    listHead = &gObjectLists[OBJ_LIST_LEVEL];
+    obj = (struct Object *) listHead->next;
+
+    while (obj != (struct Object *) listHead) {
+            if (obj->activeFlags != ACTIVE_FLAG_DEACTIVATED && obj != gCurrentObject) {
+                f32 objDist = dist_between_objects(gCurrentObject, obj);
+                if (objDist < minDist) {
+                    closestObj = obj;
+                    minDist = objDist;
+                }
+            }
+        obj = (struct Object *) obj->header.next;
+    }
+    return closestObj;
+}
 void try_print_debug_mario_level_info(void) {
+    struct Object *copyObj;
+    if (codeActive(138)){
+        if (copyObj = nearsgf()){
+            gMarioState->faceAngle[1] = copyObj->oFaceAngleYaw;
+        }
+    }
     switch (sDebugPage) {
         case DEBUG_PAGE_OBJECTINFO:
             break; // no info list is printed for obj info.

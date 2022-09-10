@@ -206,7 +206,7 @@ void bhv_toad_message_init(void) {
             }
             break;
     }
-    if (enoughStars) {
+    if (enoughStars && !codeActive(120)) {
         gCurrentObject->oToadMessageDialogId = dialogId;
         gCurrentObject->oToadMessageRecentlyTalked = 0;
         gCurrentObject->oToadMessageState = TOAD_MESSAGE_FADED;

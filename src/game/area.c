@@ -322,26 +322,28 @@ void change_area(s32 index) {
     }
 }
 
-#define CODETEST 111
-u8 codeSelected[] = { 0, 0, 0, 0, 0, CODETEST, CODETEST, CODETEST };
-u16 codeTimers[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+#define CODETEST 144
+#define MAXCODES 10
+u8 codeSelected[MAXCODES] = { CODETEST, CODETEST, CODETEST, CODETEST, CODETEST,
+                              CODETEST, CODETEST, CODETEST, CODETEST, CODETEST };
+u16 codeTimers[MAXCODES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 #define CODECOUNT 150
 u16 timer[CODECOUNT] = {
-    /*000*/ 0,   0,   120, 300, 0, 0, 0,   0,   60,  180,
-    /*010*/ 0,   0,   0,   0,   0, 0, 0,   0,   0,   0,
-    /*020*/ 200, 0,   0,   0,   0, 0, 0,   0,   0,   0,
-    /*030*/ 300, 0,   0,   0,   0, 0, 0,   300, 0,   0,
-    /*040*/ 0,   30,  0,   0,   0, 0, 0,   0,   0,   0,
-    /*050*/ 30,  120, 0,   0,   0, 0, 300, 0,   0,   0,
-    /*060*/ 300, 0,   0,   0,   0, 0, 0,   0,   0,   0,
-    /*070*/ 0,   60,  0,   600, 0, 0, 0,   0,   0,   0,
-    /*080*/ 300, 0,   150, 150, 0, 0, 0,   0,   300, 0,
-    /*090*/ 150, 0,   0,   0,   0, 0, 0,   0,   0,   0,
-    /*100*/ 0,   0,   0,   0,   0, 0, 0,   0,   0,   0,
-    /*110*/ 0,   0,   0,   0,   0, 0, 0,   0,   0,   0,
-    /*120*/ 0,   0,   0,   0,   0, 0, 0,   0,   0,   0,
-    /*130*/ 0,   0,   0,   0,   0, 0, 0,   0,   0,   0,
-    /*140*/ 0,   0,   0,   0,   0, 0, 0,   0,   0,   0,
+    /*000*/ 0,   0,   120, 300, 0,   0, 0,   0,   60,  180,
+    /*010*/ 0,   0,   0,   0,   0,   0, 0,   0,   0,   0,
+    /*020*/ 200, 0,   0,   0,   0,   0, 0,   0,   0,   0,
+    /*030*/ 300, 0,   0,   0,   0,   0, 0,   0,   0,   0,
+    /*040*/ 0,   30,  0,   0,   0,   0, 0,   0,   0,   0,
+    /*050*/ 30,  120, 0,   0,   0,   0, 300, 0,   0,   0,
+    /*060*/ 300, 0,   0,   0,   0,   0, 0,   0,   0,   0,
+    /*070*/ 0,   60,  0,   600, 0,   0, 0,   0,   0,   0,
+    /*080*/ 300, 0,   150, 150, 120, 0, 0,   0,   300, 0,
+    /*090*/ 150, 0,   0,   0,   0,   0, 0,   0,   0,   0,
+    /*100*/ 0,   0,   0,   0,   0,   0, 0,   0,   0,   0,
+    /*110*/ 0,   0,   0,   0,   0,   0, 0,   0,   0,   0,
+    /*120*/ 0,   0,   0,   0,   0,   0, 120, 120, 0,   0,
+    /*130*/ 0,   0,   0,   0,   0,   0, 0,   0,   0,   0,
+    /*140*/ 0,   0,   0,   0,   0,   0, 0,   0,   0,   0,
 };
 /*
 
@@ -381,7 +383,7 @@ u8 validTypes[] = { SURFACE_DEFAULT,
                     0 };
 u8 codeActive(int ID) {
     int i;
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < MAXCODES; i++) {
         if (codeSelected[i] == ID) {
             return 1;
         }
@@ -406,13 +408,17 @@ extern const u8 toadface[];
 int newCodeTimer = 0;
 #include "actors/common0.h"
 #include "actors/group0.h"
+#include "game/object_helpers.h"
+#include "actors/group17.h"
+extern ALIGNED8 const u8 scuttlebug_seg6_texture_06010908[];
 extern struct SequencePlayer gSequencePlayers[3];
-#define CODELENGTH 150
+#define CODELENGTH 120
 void chaos_processing() {
     int i;
     int j = 999;
     u8 *DL = 0;
     Gfx *a;
+    struct Object *object;
     int sizecurrent = 0;
     if (gCurrLevelNum != 1) {
         if (!gMarioState->marioObj) {
@@ -431,8 +437,8 @@ void chaos_processing() {
         if (newCodeTimer++ > CODELENGTH) { // minimum wait time for a new code
             newCodeTimer = 0;
             j = random_u16() % CODECOUNT; // select a code
-            j = 108;
-            i = random_u16() & 0x07;      // select an index for the code to exist in
+                                          // j = 122;
+            i = random_u16() % MAXCODES;  // select an index for the code to exist in
             codeSelected[i] = j;          // turn on code number j
             codeTimers[i] = timer[j];     // predetermined timers for some codes
             switch (j) {                  // codes that only do stuff on activation
@@ -498,8 +504,9 @@ void chaos_processing() {
                     play_sound(SOUND_GENERAL2_1UP_APPEAR, gDefaultSoundArgs);
                     break;
                 case 108:
-                    //give goomba marios face instead of goomba
-                    if (((Gfx *)segmented_to_virtual(goomba_seg8_dl_0801B5C8))->words.w1 == (u32)goomba_seg8_dl_0801B560){
+                    // give goomba marios face instead of goomba
+                    if (((Gfx *) segmented_to_virtual(goomba_seg8_dl_0801B5C8))->words.w1
+                        == (u32) goomba_seg8_dl_0801B560) {
                         a = segmented_to_virtual(goomba_seg8_dl_0801B5C8);
                         a->words.w1 = mario_cap_on_eyes_front;
                         gSPEndDisplayList(&a[1]);
@@ -510,6 +517,26 @@ void chaos_processing() {
                     break;
                 case 110:
                     quicktime2 = 60;
+                    break;
+                case 114:
+                    set_mario_action(gMarioState, ACT_RIDING_SHELL_GROUND, 0);
+                    break;
+                case 122:
+                    if (((Gfx *) segmented_to_virtual(scuttlebug_seg6_dl_06013988))->words.w1
+                        == (u32) scuttlebug_seg6_texture_06010908) {
+                        object = spawn_object(gMarioState->marioObj, MODEL_SCUTTLEBUG, bhvScuttlebug);
+                        object->oPosX += random_f32_around_zero(800.f);
+                        object->oPosY += 800.f;
+                        object->oPosZ += random_f32_around_zero(800.f);
+                        object = spawn_object(gMarioState->marioObj, MODEL_SCUTTLEBUG, bhvScuttlebug);
+                        object->oPosX += random_f32_around_zero(800.f);
+                        object->oPosY += 800.f;
+                        object->oPosZ += random_f32_around_zero(800.f);
+                        object = spawn_object(gMarioState->marioObj, MODEL_SCUTTLEBUG, bhvScuttlebug);
+                        object->oPosX += random_f32_around_zero(800.f);
+                        object->oPosY += 800.f;
+                        object->oPosZ += random_f32_around_zero(800.f);
+                    }
                     break;
             }
         }
@@ -575,12 +602,9 @@ void chaos_processing() {
         if (quicktime2) {
             quicktime2--;
             print_text_fmt_int(40, 60, "PRESS DPAD DOWN TO DIE", 0);
-            if (!quicktime2) {
-                gMarioState->health = 0;
-            }
             if (gMarioState->controller->buttonPressed & D_JPAD) {
                 quicktime2 = 0;
-                play_sound(SOUND_GENERAL2_RIGHT_ANSWER, gDefaultSoundArgs);
+                gMarioState->health = 0;
             }
         }
         if (codeActive(28)) {
@@ -636,6 +660,14 @@ void chaos_processing() {
             gMarioState->flags &= ~(MARIO_ACTION_SOUND_PLAYED | MARIO_MARIO_SOUND_PLAYED);
         }
 
+        if (codeActive(142)) {
+            if (gMarioState->floor) {
+                if (gMarioState->floor->type >= SURFACE_SHALLOW_QUICKSAND
+                    && gMarioState->floor->type <= SURFACE_MOVING_QUICKSAND) {
+                    gMarioState->floor->type = SURFACE_QUICKSAND;
+                }
+            }
+        }
         // add processing for more codes here:
     }
 

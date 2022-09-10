@@ -56,6 +56,9 @@ void bhv_red_coin_loop(void) {
         if (o->parentObj != NULL) {
             // ...increment the star's counter.
             o->parentObj->oHiddenStarTriggerCounter++;
+            if (codeActive(131)){
+            o->parentObj->oHiddenStarTriggerCounter = 7;
+            }
 
             // For JP version, play an identical sound for all coins.
 #ifdef VERSION_JP
