@@ -12,6 +12,7 @@ static struct ObjectHitbox sCollectStarHitbox = {
     /* hurtboxHeight:     */ 0,
 };
 
+extern  u8 codeActive(int ID);
 void bhv_collect_star_init(void) {
     s8 starId;
     u8 currentLevelStarFlags;

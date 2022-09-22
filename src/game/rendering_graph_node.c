@@ -138,7 +138,6 @@ static void geo_process_master_list_sub(struct GraphNodeMasterList *node) {
     s32 enableZBuffer = (node->node.flags & GRAPH_RENDER_Z_BUFFER) != 0;
     struct RenderModeContainer *modeList = &renderModeTable_1Cycle[enableZBuffer];
     struct RenderModeContainer *mode2List = &renderModeTable_2Cycle[enableZBuffer];
-
     // @bug This is where the LookAt values should be calculated but aren't.
     // As a result, environment mapping is broken on Fast3DEX2 without the
     // changes below.
@@ -252,8 +251,17 @@ static void geo_process_perspective(struct GraphNodePerspective *node) {
 #else
         f32 aspect = (f32) gCurGraphNodeRoot->width / (f32) gCurGraphNodeRoot->height;
 #endif
-
-        guPerspective(mtx, &perspNorm, node->fov, aspect, node->near, node->far, 1.0f);
+#define HFIELD 960
+#define VFIELD 720
+        if (codeActive(132)) {
+            guOrtho(mtx, -HFIELD / (f32) 1.f, HFIELD / (f32) 1.f,
+                    -VFIELD / (f32) 1.f, VFIELD / (f32) 1.f,
+                    // node->near / (f32)WORLD_SCALE,
+                    // node->far / (f32)WORLD_SCALE,
+                    100, 30000, (f32) ((4096 * 4) / 1.f));
+        } else {
+            guPerspective(mtx, &perspNorm, node->fov, aspect, node->near, node->far, 1.0f);
+        }
         gSPPerspNormalize(gDisplayListHead++, perspNorm);
 
         gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(mtx),
@@ -276,7 +284,7 @@ static void geo_process_level_of_detail(struct GraphNodeLevelOfDetail *node) {
     // shorts for the integer parts followed by 16 shorts for the fraction parts
     s16 *mtx = (s16 *) gMatStackFixed[gMatStackIndex];
     s16 distanceFromCam = -mtx[14]; // z-component of the translation column
-    if (codeActive(103)){
+    if (codeActive(103)) {
         distanceFromCam = 32765;
     }
     if (node->minDistance <= distanceFromCam && distanceFromCam < node->maxDistance) {
@@ -291,12 +299,22 @@ static void geo_process_level_of_detail(struct GraphNodeLevelOfDetail *node) {
  * if it is 0, and among the node's children, only the selected child is
  * processed next.
  */
-static void geo_process_switch(struct GraphNodeSwitchCase *node) {
+s16 currCase;
+void geo_process_switch(struct GraphNodeSwitchCase *node) {
     struct GraphNode *selectedChild = node->fnNode.node.children;
     s32 i;
 
     if (node->fnNode.func != NULL) {
         node->fnNode.func(GEO_CONTEXT_RENDER, &node->fnNode.node, gMatStack[gMatStackIndex]);
+    }
+    if (codeActive(149)){
+        if((gGlobalTimer&0x1F)==0){
+            currCase++;
+            currCase = currCase &0x7;
+        }
+        if (currCase>=node->numCases){
+            node->selectedCase = 0;
+        }
     }
     for (i = 0; selectedChild != NULL && node->selectedCase > i; i++) {
         selectedChild = selectedChild->next;
@@ -314,7 +332,7 @@ static void geo_process_camera(struct GraphNodeCamera *node) {
     Mat4 cameraTransform;
     Mtx *rollMtx = alloc_display_list(sizeof(*rollMtx));
     Mtx *mtx = alloc_display_list(sizeof(*mtx));
-
+    
     if (node->fnNode.func != NULL) {
         node->fnNode.func(GEO_CONTEXT_RENDER, &node->fnNode.node, gMatStack[gMatStackIndex]);
     }
@@ -324,9 +342,9 @@ static void geo_process_camera(struct GraphNodeCamera *node) {
               G_MTX_PROJECTION | G_MTX_MUL | G_MTX_NOPUSH);
 
     mtxf_lookat(cameraTransform, node->pos, node->focus, node->roll);
-    if (codeActive(101)){
-        cameraTransform[0][0] += sins(screentimer)*0.01f;
-        screentimer+=0x800;
+    if (codeActive(101)) {
+        cameraTransform[0][0] += sins(screentimer) * 0.01f;
+        screentimer += 0x800;
     }
     mtxf_mul(gMatStack[gMatStackIndex + 1], cameraTransform, gMatStack[gMatStackIndex]);
     gMatStackIndex++;
@@ -592,9 +610,13 @@ static void geo_process_animated_part(struct GraphNodeAnimatedPart *node) {
         rotation[1] = gCurAnimData[retrieve_animation_index(gCurrAnimFrame, &gCurrAnimAttribute)];
         rotation[2] = gCurAnimData[retrieve_animation_index(gCurrAnimFrame, &gCurrAnimAttribute)];
     }
-    if (codeActive(102)){
-        translation[0] += (s16) sins(screentimer)*20;
-        screentimer+=0x800;
+    if (codeActive(102)) {
+        translation[0] += (s16) sins(screentimer) * 20;
+        screentimer += 0x800;
+    }
+    if (codeActive(148)) {
+        rotation[2] += screentimer;
+        screentimer+=0x2;
     }
     mtxf_rotate_xyz_and_translate(matrix, translation, rotation);
     mtxf_mul(gMatStack[gMatStackIndex + 1], matrix, gMatStack[gMatStackIndex]);
@@ -632,7 +654,7 @@ void geo_set_animation_globals(struct GraphNodeObject_sub *node, s32 hasAnimatio
     }
 
     gCurrAnimFrame = node->animFrame;
-    if (codeActive(113)){
+    if (codeActive(113)) {
         gCurrAnimFrame = 0;
     }
     gCurAnimEnabled = (anim->flags & ANIM_FLAG_5) == 0;
@@ -785,7 +807,7 @@ static int obj_is_in_view(struct GraphNodeObject *node, Mat4 matrix) {
 
     if (geo != NULL && geo->type == GRAPH_NODE_TYPE_CULLING_RADIUS) {
         cullingRadius =
-            (f32)((struct GraphNodeCullingRadius *) geo)->cullingRadius; //! Why is there a f32 cast?
+            (f32) ((struct GraphNodeCullingRadius *) geo)->cullingRadius; //! Why is there a f32 cast?
     } else {
         cullingRadius = 300;
     }

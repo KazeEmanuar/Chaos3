@@ -485,7 +485,7 @@ struct Object *nearsgf() {
     struct Object *closestObj = NULL;
     struct Object *obj;
     struct ObjectNode *listHead;
-    f32 minDist = 750.f;
+    f32 minDist = 450.f;
 
     listHead = &gObjectLists[OBJ_LIST_LEVEL];
     obj = (struct Object *) listHead->next;

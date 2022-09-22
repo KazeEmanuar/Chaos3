@@ -162,15 +162,6 @@ ifeq ($(COMPILER),gcc)
 endif
 
   OPT_FLAGS := -O2
-ifeq ($(VERSION),eu)
-  OPT_FLAGS := -O2
-else
-ifeq ($(VERSION),sh)
-  OPT_FLAGS := -O2
-else
-  OPT_FLAGS := -O2
-endif
-endif
 
 # Use a default opt flag for gcc
 ifeq ($(COMPILER),gcc)

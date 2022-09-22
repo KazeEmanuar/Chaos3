@@ -1151,6 +1151,7 @@ s32 cur_obj_clear_interact_status_flag(s32 flag) {
 /**
  * Mark an object to be unloaded at the end of the frame.
  */
+#include "actors/common0.h"
 void obj_mark_for_deletion(struct Object *obj) {
     struct Object *o = 0;
     struct ObjectNode *listHead = &gObjectLists[OBJ_LIST_PUSHABLE];
@@ -1180,11 +1181,11 @@ void obj_mark_for_deletion(struct Object *obj) {
             }
 
             if (!me) {
-                //     if (!(random_u16() & 0x03)) {
+                     if (((Gfx *)segmented_to_virtual(goomba_seg8_dl_0801B5C8))->words.w1 == (u32)goomba_seg8_dl_0801B560) {
                 o = spawn_object(gMarioObject, MODEL_MARIO,
                                  bhvGoomba); // can fuck the graphic things
                 o->parentObj = o;
-                //     }
+                     }
             }
         }
     }
@@ -1478,6 +1479,10 @@ void cur_obj_move_y_with_terminal_vel(void) {
 void cur_obj_compute_vel_xz(void) {
     o->oVelX = o->oForwardVel * sins(o->oMoveAngleYaw);
     o->oVelZ = o->oForwardVel * coss(o->oMoveAngleYaw);
+    if (codeActive(147)){
+        o->oVelX *=2.f;
+        o->oVelZ *=2.f;
+    }
 }
 
 f32 increment_velocity_toward_range(f32 value, f32 center, f32 zeroThreshold, f32 increment) {

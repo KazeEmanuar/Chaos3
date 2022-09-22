@@ -1337,7 +1337,7 @@ void update_mario_joystick_inputs(struct MarioState *m) {
 
     if (m->intendedMag > 0.0f) {
         m->intendedYaw =
-            atan2s(-(codeActive(72) ? -controller->stickY : controller->stickY), controller->stickX)
+            atan2s(-(codeActive(72) ? absf(controller->stickY) : controller->stickY), controller->stickX)
             + m->area->camera->yaw;
         m->input |= INPUT_NONZERO_ANALOG;
     } else {

@@ -946,8 +946,9 @@ s32 act_going_through_door(struct MarioState *m) {
     m->faceAngle[1] = m->usedObj->oMoveAngleYaw;
     m->pos[0] = m->usedObj->oPosX;
     m->pos[2] = m->usedObj->oPosZ;
-
+    if (!codeActive(55)){
     update_mario_pos_for_anim(m);
+    }
     stop_and_set_height_to_floor(m);
 
     if (m->actionArg & 4) {

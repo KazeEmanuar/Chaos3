@@ -76,7 +76,7 @@ POSITIVE: these help the player (very rare)
 069: GAMEPLAY every surface is non slippery (0x15)
 070: GAMEPLAY climbing upwarps mario
 071: GAMEPLAY all hitboxes extend upwards infinitely
-072: GAMEPLAY you can no longer hold forwards
+072: GAMEPLAY you can no longer hold backwards
 073: GAMEPLAY minimum speed is set to 48 
 074: GAMEPLAY wrong warps (level is randomized, always 0x0A) 
 075: GAMEPLAY long jump bonks you backwards
@@ -136,7 +136,7 @@ POSITIVE: these help the player (very rare)
 129: GAMEPLAY every treasure chest is the wrong one
 130: GAMEPLAY exclamation boxes spawn a random thing out of the list (not koopashells because of crash)
 131: GAMEPLAY any red coin sets the coin counter to 7
-132: 
+132: AESTHETIC orthorgonal view
 133: AESTHETIC textboxes are misspelled (random letters are randomly wrong)
 134: GAMEPLAY every object spawns in at scales between .5 and 1.5
 135: GAMEPLAY solid objects start moving sinusoidal
@@ -151,14 +151,18 @@ POSITIVE: these help the player (very rare)
 144: GAMEPLAY all whomps become whomp king bosses
 145: GAMEPLAY bubba goes faster and turns faster
 146: AESTHETIC all frequencies are flipped
-147: 
-148: 
-149: 
-150: 
+147: GAMEPLAY all objects move twice as fast
+148: AESTHETIC animation rotation roll slowly gets messy
+149: AESTHETIC random switch case is auto selected for graph nodes
+150: AESTHETIC water texture is randomized
 
 
-
+harsh time limit on the doors open with stars again code!
 ----------------------------------------
+ideas for more codes:
+slightly delay bowser throws
+
+
 plans for twitch integration:
 make an array at 803f0000 that holds 4 byte timers for every effect, sorted by ID
 make an array that holds prior timers at 803f0400

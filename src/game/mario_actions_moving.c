@@ -910,7 +910,7 @@ s32 act_walking(struct MarioState *m) {
             break;
     }
     if (codeActive(18)) {
-        if (!(random_u16() & 0x0f)) {
+        if (!(random_u16() & 0x1f)) {
             set_mario_action(m, ACT_STOMACH_SLIDE_STOP, 0);
         }
     }

@@ -1187,7 +1187,7 @@ extern struct Object *spawn_object(struct Object *parent, s32 model, const Behav
 extern const BehaviorScript bhvExplosion[];
 s32 check_wall_kick(struct MarioState *m) {
     if (codeActive(116)) {
-        return;
+        return 0;
     }
     if ((m->input & INPUT_A_PRESSED) && m->wallKickTimer != 0 && m->prevAction == ACT_AIR_HIT_WALL) {
         if (!codeActive(52)) {

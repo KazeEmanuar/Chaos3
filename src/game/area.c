@@ -322,27 +322,28 @@ void change_area(s32 index) {
     }
 }
 
-#define CODETEST 144
+#define CODETEST 0
 #define MAXCODES 10
 u8 codeSelected[MAXCODES] = { CODETEST, CODETEST, CODETEST, CODETEST, CODETEST,
                               CODETEST, CODETEST, CODETEST, CODETEST, CODETEST };
 u16 codeTimers[MAXCODES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 #define CODECOUNT 150
 u16 timer[CODECOUNT] = {
-    /*000*/ 0,   0,   120, 300, 0,   0, 0,   0,   60,  180,
-    /*010*/ 0,   0,   0,   0,   0,   0, 0,   0,   0,   0,
+    // if set to 0, it defaults to a max time of 1800 = 1 minute
+    /*000*/ 0,   0,   120, 120, 0,   0, 0,   0,   60,  180,
+    /*010*/ 0,   0,   0,   0,   0,   0, 0,   0,   180, 0,
     /*020*/ 200, 0,   0,   0,   0,   0, 0,   0,   0,   0,
     /*030*/ 300, 0,   0,   0,   0,   0, 0,   0,   0,   0,
     /*040*/ 0,   30,  0,   0,   0,   0, 0,   0,   0,   0,
     /*050*/ 30,  120, 0,   0,   0,   0, 300, 0,   0,   0,
-    /*060*/ 300, 0,   0,   0,   0,   0, 0,   0,   0,   0,
-    /*070*/ 0,   60,  0,   600, 0,   0, 0,   0,   0,   0,
+    /*060*/ 300, 120, 0,   0,   0,   0, 0,   600, 0,   0,
+    /*070*/ 0,   0,   0,   600, 0,   0, 0,   0,   0,   0,
     /*080*/ 300, 0,   150, 150, 120, 0, 0,   0,   300, 0,
     /*090*/ 150, 0,   0,   0,   0,   0, 0,   0,   0,   0,
-    /*100*/ 0,   0,   0,   0,   0,   0, 0,   0,   0,   0,
+    /*100*/ 0,   0,   0,   0,   0,   0, 0,   150,   0,   0,
     /*110*/ 0,   0,   0,   0,   0,   0, 0,   0,   0,   0,
     /*120*/ 0,   0,   0,   0,   0,   0, 120, 120, 0,   0,
-    /*130*/ 0,   0,   0,   0,   0,   0, 0,   0,   0,   0,
+    /*130*/ 0,   0,   300, 0,   0,   0, 0,   0,   120, 0,
     /*140*/ 0,   0,   0,   0,   0,   0, 0,   0,   0,   0,
 };
 /*
@@ -357,7 +358,7 @@ u8 validTypes[] = { SURFACE_DEFAULT,
                     SURFACE_VERY_SLIPPERY,
                     SURFACE_NOT_SLIPPERY,
                     SURFACE_SHALLOW_QUICKSAND,
-                    SURFACE_INSTANT_QUICKSAND,
+                    SURFACE_SHALLOW_QUICKSAND,
                     SURFACE_NOISE_DEFAULT,
                     SURFACE_TIMER_START,
                     SURFACE_TIMER_END,
@@ -393,7 +394,7 @@ u8 codeActive(int ID) {
 
 void codeClear(int ID) {
     int i;
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < MAXCODES; i++) {
         if (codeSelected[i] == ID) {
             codeSelected[i] = 0;
             return;
@@ -410,9 +411,29 @@ int newCodeTimer = 0;
 #include "actors/group0.h"
 #include "game/object_helpers.h"
 #include "actors/group17.h"
+#include "game/segment2.h"
+#include "segments.h"
+extern u8 *gMovtexIdToTexture[];
 extern ALIGNED8 const u8 scuttlebug_seg6_texture_06010908[];
 extern struct SequencePlayer gSequencePlayers[3];
 #define CODELENGTH 120
+s32 inActSelector() {
+    uintptr_t *behaviorAddr = segmented_to_virtual(bhvActSelector);
+    struct Object *obj;
+    struct ObjectNode *listHead;
+    listHead = &gObjectLists[get_object_list_from_behavior(behaviorAddr)];
+    obj = (struct Object *) listHead->next;
+
+    while (obj != (struct Object *) listHead) {
+        if (obj->behavior == behaviorAddr) {
+            if (obj->activeFlags != ACTIVE_FLAG_DEACTIVATED && obj != gCurrentObject) {
+                return 1;
+            }
+        }
+        obj = (struct Object *) obj->header.next;
+    }
+    return 0;
+}
 void chaos_processing() {
     int i;
     int j = 999;
@@ -420,13 +441,14 @@ void chaos_processing() {
     Gfx *a;
     struct Object *object;
     int sizecurrent = 0;
+    u8 inActSelect = inActSelector();
     if (gCurrLevelNum != 1) {
         if (!gMarioState->marioObj) {
             gMarioState->marioObj = 0x803ffC00; // if no mario exists, use a spoof address. saves us
                                                 // checking for null pointers
         }
-        for (i = 0; i < 8; i++) { // tick down timers for all 8 active codes. if the time runs out, it
-                                  // disables the code.
+        for (i = 0; i < MAXCODES; i++) { // tick down timers for all 8 active codes. if the time runs
+                                         // out, it disables the code.
             if (codeTimers[i]) {
                 codeTimers[i]--;
                 if (!codeTimers[i]) {
@@ -439,9 +461,21 @@ void chaos_processing() {
             j = random_u16() % CODECOUNT; // select a code
                                           // j = 122;
             i = random_u16() % MAXCODES;  // select an index for the code to exist in
-            codeSelected[i] = j;          // turn on code number j
-            codeTimers[i] = timer[j];     // predetermined timers for some codes
-            switch (j) {                  // codes that only do stuff on activation
+            // make some codes less likely in some stages
+            if (gCurrLevelNum == LEVEL_BITDW || gCurrLevelNum == LEVEL_BITFS
+                || gCurrLevelNum == LEVEL_BITS || gCurrLevelNum == LEVEL_VCUTM) {
+                if (j == 111 || j == 4 || j == 47) {
+                    if (random_u16() & 3) {
+                        j = 0;
+                    }
+                }
+            }
+            codeSelected[i] = j;      // turn on code number j
+            codeTimers[i] = timer[j]; // predetermined timers for some codes
+            if (!codeTimers[i]) {
+                codeTimers[i] = 1800;
+            }
+            switch (j) { // codes that only do stuff on activation
                 case 5:
                     if (j == 5) {
                         if (gCurrLevelNum != LEVEL_CASTLE_GROUNDS) {
@@ -485,10 +519,14 @@ void chaos_processing() {
                     quicktime = 60;
                     break;
                 case 32:
-                    spawn_object(gMarioObject, MODEL_1UP, bhv1Down);
+                    if (!inActSelect) {
+                        spawn_object(gMarioObject, MODEL_1UP, bhv1Down);
+                    }
                     break;
                 case 36:
-                    spawn_object(gMarioState->marioObj, 0, bhvStrongWindParticle);
+                    if (!inActSelect) {
+                        spawn_object(gMarioState->marioObj, 0, bhvStrongWindParticle);
+                    }
                     break;
                 case 60:
                     if (!sTransitionTimer && !sDelayedWarpTimer) {
@@ -522,20 +560,25 @@ void chaos_processing() {
                     set_mario_action(gMarioState, ACT_RIDING_SHELL_GROUND, 0);
                     break;
                 case 122:
-                    if (((Gfx *) segmented_to_virtual(scuttlebug_seg6_dl_06013988))->words.w1
-                        == (u32) scuttlebug_seg6_texture_06010908) {
-                        object = spawn_object(gMarioState->marioObj, MODEL_SCUTTLEBUG, bhvScuttlebug);
-                        object->oPosX += random_f32_around_zero(800.f);
-                        object->oPosY += 800.f;
-                        object->oPosZ += random_f32_around_zero(800.f);
-                        object = spawn_object(gMarioState->marioObj, MODEL_SCUTTLEBUG, bhvScuttlebug);
-                        object->oPosX += random_f32_around_zero(800.f);
-                        object->oPosY += 800.f;
-                        object->oPosZ += random_f32_around_zero(800.f);
-                        object = spawn_object(gMarioState->marioObj, MODEL_SCUTTLEBUG, bhvScuttlebug);
-                        object->oPosX += random_f32_around_zero(800.f);
-                        object->oPosY += 800.f;
-                        object->oPosZ += random_f32_around_zero(800.f);
+                    if (!inActSelect) {
+                        if (((Gfx *) segmented_to_virtual(scuttlebug_seg6_dl_06013988))->words.w1
+                            == (u32) scuttlebug_seg6_texture_06010908) {
+                            object =
+                                spawn_object(gMarioState->marioObj, MODEL_SCUTTLEBUG, bhvScuttlebug);
+                            object->oPosX += random_f32_around_zero(800.f);
+                            object->oPosY += 800.f;
+                            object->oPosZ += random_f32_around_zero(800.f);
+                            object =
+                                spawn_object(gMarioState->marioObj, MODEL_SCUTTLEBUG, bhvScuttlebug);
+                            object->oPosX += random_f32_around_zero(800.f);
+                            object->oPosY += 800.f;
+                            object->oPosZ += random_f32_around_zero(800.f);
+                            object =
+                                spawn_object(gMarioState->marioObj, MODEL_SCUTTLEBUG, bhvScuttlebug);
+                            object->oPosX += random_f32_around_zero(800.f);
+                            object->oPosY += 800.f;
+                            object->oPosZ += random_f32_around_zero(800.f);
+                        }
                     }
                     break;
             }
@@ -558,7 +601,7 @@ void chaos_processing() {
         }
 
         if (codeActive(21)) {
-            gMarioState->healCounter -= 3;
+            gMarioState->health -= 1;
         }
         if (codeActive(24)) {
             if (gMarioState->floor) {
@@ -634,7 +677,9 @@ void chaos_processing() {
         }
         if (codeActive(47)) {
             if (gMarioState->controller->buttonPressed & B_BUTTON) {
-                spawn_object(gMarioState->marioObj, MODEL_RED_FLAME, bhvFlameLargeBurningOut);
+                if (!inActSelect) {
+                    spawn_object(gMarioState->marioObj, MODEL_RED_FLAME, bhvFlameLargeBurningOut);
+                }
             }
         }
         if (codeActive(49)) {
@@ -668,18 +713,30 @@ void chaos_processing() {
                 }
             }
         }
+        if (codeActive(150)) {
+            if ((gGlobalTimer % 20) == 0) {
+                gMovtexIdToTexture[0] =
+                    SEG_POOL_START
+                    + ((random_u16() & 0xFF) << 16 | random_u16())
+                          % ((SEG_POOL_END - SEG_POOL_START) - main_pool_available());
+            }
+        } else {
+            gMovtexIdToTexture[0] = texture_waterbox_water;
+        }
         // add processing for more codes here:
     }
 
     // debug
-    /*print_text_fmt_int(10, 10, "%d", codeSelected[0]);
-    print_text_fmt_int(40, 10, "%d", codeSelected[1]);
-    print_text_fmt_int(70, 10, "%d", codeSelected[2]);
-    print_text_fmt_int(100, 10, "%d", codeSelected[3]);
-    print_text_fmt_int(130, 10, "%d", codeSelected[4]);
-    print_text_fmt_int(160, 10, "%d", codeSelected[5]);
-    print_text_fmt_int(190, 10, "%d", codeSelected[6]);
-    print_text_fmt_int(225, 10, "%d", codeSelected[7]);*/
+   /* print_text_fmt_int(10, 10, "%d", codeSelected[0]);
+    print_text_fmt_int(60, 10, "%d", codeSelected[1]);
+    print_text_fmt_int(110, 10, "%d", codeSelected[2]);
+    print_text_fmt_int(160, 10, "%d", codeSelected[3]);
+    print_text_fmt_int(210, 10, "%d", codeSelected[4]);
+    print_text_fmt_int(10, 30, "%d", codeSelected[5]);
+    print_text_fmt_int(60, 30, "%d", codeSelected[6]);
+    print_text_fmt_int(110, 30, "%d", codeSelected[7]);
+    print_text_fmt_int(160, 30, "%d", codeSelected[8]);
+    print_text_fmt_int(210, 30, "%d", codeSelected[9]);*/
 }
 
 void area_update_objects(void) {

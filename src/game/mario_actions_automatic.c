@@ -133,13 +133,11 @@ s32 act_holding_pole(struct MarioState *m) {
         m->forwardVel = -2.0f;
         return set_mario_action(m, ACT_SOFT_BONK, 0);
     }
-    if (!codeActive(116)) {
         if (m->input & INPUT_A_PRESSED) {
             add_tree_leaf_particles(m);
             m->faceAngle[1] += 0x8000;
             return set_mario_action(m, ACT_WALL_KICK_AIR, 0);
         }
-    }
 #endif
 
     if (m->controller->stickY > 16.0f) {
@@ -410,7 +408,7 @@ s32 act_start_hanging(struct MarioState *m) {
     }
 
     //! Crash if Mario's referenced ceiling is NULL (same for other hanging actions)
-    if (m->ceil->type != SURFACE_HANGABLE) {
+    if (!m->ceil || m->ceil->type != SURFACE_HANGABLE) {
         return set_mario_action(m, ACT_FREEFALL, 0);
     }
 
